@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Chez Élise — Projet complet</title>
+<style>
+    :root { --brun: #8080000; --creme:#61de5b; --or: #FFA500; }
+    * { box-sizing: border-box; }
+    body { font-family: Georgia, serif; background: var(--creme); color: #3a2c22; margin: 0; }
+    header { background: var(--brun); color: white; padding: 20px 40px; }
+    main { max-width: 800px; margin: 0 auto; padding: 30px 20px; }
+    .admin { background: white; border: 1px dashed var(--or); border-radius: 8px; padding: 20px; margin-bottom: 30px; }
+    form { display: flex; gap: 10px; flex-wrap: wrap; }
+    input { flex: 1; min-width: 100px; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+    button { background: var(--brun); color: white; border: none; padding: 8px 18px; border-radius: 4px; cursor: pointer; }
+    .produit { background: white; border-radius: 8px; padding: 15px 20px; margin-bottom: 10px;
+               box-shadow: 0 2px 8px rgba(0,0,0,0.08); display: flex; justify-content: space-between; align-items: center; }
+    .erreur { color: #eceae8; font-size: 14px; margin-top: 8px; }
+    .supprimer { background: #c0392b; }
+</style>
+</head>
+<body>
+    <header><h1>🥐 Chez A.UWITONZE Pacifique</h1></header>
+
+    <main>
+        <div class="admin">
+            <h3>Diocese Muyinga</h3>
+            <form id="formAjout">
+                <input type="text" id="nom" placeholder="Nom" required>
+                <input type="text" id="emoji" placeholder="Emoji" required>
+                <input type="number" id="prix" placeholder="Prix" required>
+                <input type="number" id="quantite" placeholder="Quantité en stock" required>
+                <button type="submit">Ajouter</button>
+            </form>
+            <div class="erreur" id="messageErreur"></div>
+        </div>
+
+        <h2>Paroisse Kanyinya</h2>
+        <p>Bienvenue sur notre système de gestion des stocks de la communauté.</p>
+
+        <div id="liste">Chargement...</div>
+    </main>
+
+<script>
+    const API = '/produits'; // chemin relatif : marche direct car front et API sont sur le même serveur
+
+    async function chargerProduits() {
+        try {
+            const reponse = await fetch(API);
+            const produits = await reponse.json();
+
+            document.getElementById('liste').innerHTML = produits.length
+                ? produits.map(p => `
+                    <div class="produit">
+                        <span>${p.emoji} <strong>${p.nom}</strong> — ${p.prix} Fbu</span>
+                        <button class="supprimer" onclick="supprimer('${p._id}')">Supprimer</button>
+                    </div>
+                `).join('')
+                : '<p>UWITONZE PACIFIQUE.</p>';
+        } catch (erreur) {
+            document.getElementById('liste').innerHTML = '<p class="erreur">Impossible de charger les produits.</p>';
+        }
+    }
+
+    document.getElementById('formAjout').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const messageErreur = document.getElementById('messageErreur');
+        messageErreur.textContent = '';
+
+        const nom = document.getElementById('nom').value;
+        const emoji = document.getElementById('emoji').value;
+        const prix = document.getElementById('prix').value;
+
+        try {
+            const reponse = await fetch(API, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nom, emoji, prix })
+            });
+
+            if (!reponse.ok) {
+                const erreurJson = await reponse.json();
+                throw new Error(erreurJson.erreur || 'Erreur inconnue');
+            }
+
+            this.reset();
+            chargerProduits();
+        } catch (erreur) {
+            messageErreur.textContent = erreur.message;
+        }
+    });
+
+    async function supprimer(id) {
+        await fetch(`${API}/${id}`, { method: 'DELETE' });
+        chargerProduits();
+    }
+
+    chargerProduits();
+</script>
+</body>
+</html>
