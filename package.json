@@ -1,0 +1,12 @@
+{
+      "name": "gestionparoisse",
+      "version": "1.0.0",
+      "start": "node server.js",
+      "dependencies": {
+            "dotenv": "^17.4.2",
+            "express": "^4.18.2",
+            "install": "^0.13.0",
+            "mongoose": "^9.10.0",
+            "npm": "^12.0.2"
+      }
+}
