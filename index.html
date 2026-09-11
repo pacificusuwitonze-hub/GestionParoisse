@@ -2,150 +2,235 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Gestion Paroisse Kanyinya</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paroisse Kanyinya - Archidiocèse de Bujumbura</title>
     <style>
-        body { font-family: Arial; margin: 0; background: #f4f4f4; }
-        .container { max-width: 900px; margin: 20px auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .tabs { display: flex; border-bottom: 2px solid #4CAF50; }
-        .tab { padding: 12px 20px; cursor: pointer; background: #eee; }
-        .tab.active { background: #4CAF50; color: white; font-weight: bold; }
-        .tab-content { display: none; padding: 20px 0; }
-        .tab-content.active { display: block; }
-        input, select, button { padding: 10px; margin: 5px; border: 1px solid #ccc; border-radius: 4px; }
-        button { background: #4CAF50; color: white; cursor: pointer; border: none; }
-        button:hover { background: #45a049; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
-        th { background: #4CAF50; color: white; }
-        #loginBox { max-width: 400px; margin: 100px auto; text-align: center; }
-        .logout { float: right; background: red; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        :root {
+            --rouge-eglise: #8B0000;
+            --or: #D4AF37;
+            --gris-clair: #f5f5f5;
+        }
+        body { background: #fff; color: #333; }
+        
+        /* MENU */
+        nav {
+            background: var(--rouge-eglise);
+            color: white;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        nav .container {
+            max-width: 1200px;
+            margin: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+        nav h1 { font-size: 20px; }
+        nav ul { display: flex; list-style: none; gap: 20px; }
+        nav a { color: white; text-decoration: none; font-weight: 500; }
+        nav a:hover { color: var(--or); }
+
+        /* 1. ACCUEIL */
+        #accueil {
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1507699622108-4be3abd695ad') center/cover;
+            color: white;
+            text-align: center;
+            padding: 100px 20px;
+        }
+        #accueil h2 { font-size: 40px; margin-bottom: 10px; }
+        .box-info {
+            background: rgba(139,0,0,0.8);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px auto;
+            max-width: 600px;
+        }
+        .btn {
+            background: var(--or);
+            color: var(--rouge-eglise);
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        /* SECTIONS GENERALES */
+        section { padding: 60px 20px; max-width: 1200px; margin: auto; }
+        section h2 { 
+            color: var(--rouge-eglise); 
+            text-align: center; 
+            margin-bottom: 40px; 
+            font-size: 32px;
+            border-bottom: 3px solid var(--or);
+            display: inline-block;
+            padding-bottom: 10px;
+        }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; }
+        .card {
+            background: var(--gris-clair);
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .card h3 { color: var(--rouge-eglise); margin-bottom: 10px; }
+
+        /* 5. GESTION */
+        #gestion { background: var(--gris-clair); }
+        .btn-gestion {
+            background: var(--rouge-eglise);
+            color: white;
+        }
+
+        /* 7. CONTACT */
+        #contact { background: var(--rouge-eglise); color: white; }
+        #contact h2 { color: white; border-color: var(--or); }
+
+        footer {
+            background: #222;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
     </style>
 </head>
 <body>
 
-<div id="loginBox" class="container">
-    <h2>🔒 Connexion Responsable</h2>
-    <input type="email" id="email" placeholder="Email" value="admin@paroisse.com" style="width:90%"><br>
-    <input type="password" id="password" placeholder="Mot de passe" value="admin123" style="width:90%"><br>
-    <button onclick="login()" style="width:90%">Se connecter</button>
-    <p id="loginError" style="color:red"></p>
-</div>
+    <!-- MENU -->
+    <nav>
+        <div class="container">
+            <h1>⛪ Paroisse Kanyinya</h1>
+            <ul>
+                <li><a href="#accueil">Accueil</a></li>
+                <li><a href="#paroisse">La Paroisse</a></li>
+                <li><a href="#horaires">Horaires</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#gestion">Gestion</a></li>
+                <li><a href="#actualites">Actualités</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
 
-<div id="app" class="container" style="display:none">
-    <h2>Gestion Paroisse Kanyinya - Bienvenue <span id="userName"></span></h2>
-    <button onclick="logout()" class="logout">Déconnexion</button>
-    
-    <div class="tabs">
-        <div class="tab active" onclick="openTab('produits')">📦 Produits</div>
-        <div class="tab" onclick="openTab('membres')">👥 Membres</div>
-        <div class="tab" onclick="openTab('offrandes')">💰 Quêtes/Dîmes</div>
-    </div>
+    <!-- 1. ACCUEIL -->
+    <section id="accueil">
+        <h2>Bienvenue à la Paroisse Kanyinya</h2>
+        <div class="box-info">
+            <h3>🕊️ Prochaine Messe</h3>
+            <p><b>Dimanche 14 Septembre 2026 - 09h00</b></p>
+            <p>Messe en Kirundi avec la Chorale Abakama</p>
+        </div>
+        <div class="box-info" style="background: rgba(212,175,55,0.9); color: #000;">
+            <h3>📢 Annonce Urgente</h3>
+            <p>Collecte spéciale pour la rénovation du toit de l'église. Merci pour votre générosité.</p>
+        </div>
+        <a href="#horaires" class="btn">Voir tous les horaires</a>
+    </section>
 
-    <!-- ONGLET PRODUITS -->
-    <div id="produits" class="tab-content active">
-        <h3>Ajouter Produit</h3>
-        <input id="nomProduit" placeholder="Nom produit">
-        <input id="emojiProduit" placeholder="Emoji ex: 📖">
-        <input id="prixProduit" type="number" placeholder="Prix Fbu">
-        <button onclick="addProduit()">Ajouter</button>
-        <table id="tableProduits"></table>
-    </div>
+    <!-- 2. LA PAROISSE -->
+    <section id="paroisse">
+        <h2>La Paroisse</h2>
+        <div class="grid">
+            <div class="card">
+                <h3>Mot du Curé</h3>
+                <p>"Que la paix du Christ règne dans nos familles. Bienvenue chez nous à Kanyinya."</p>
+            </div>
+            <div class="card">
+                <h3>Histoire</h3>
+                <p>Fondée en 1985, la Paroisse Kanyinya compte aujourd'hui 16 communautés.</p>
+            </div>
+            <div class="card">
+                <h3>Conseil Paroissial</h3>
+                <p>Président: Mr Niyonzima | Secrétaire: Mme Ndayiragije</p>
+            </div>
+            <div class="card">
+                <h3>Statistiques</h3>
+                <p>4500 Catholiques | 16 Communautés | 3 Ecoles Catholiques</p>
+            </div>
+        </div>
+    </section>
 
-    <!-- ONGLET MEMBRES -->
-    <div id="membres" class="tab-content">
-        <h3>Ajouter Membre</h3>
-        <input id="nomMembre" placeholder="Nom complet">
-        <input id="telMembre" placeholder="Téléphone">
-        <input id="adresseMembre" placeholder="Adresse">
-        <button onclick="addMembre()">Ajouter</button>
-        <table id="tableMembres"></table>
-    </div>
+    <!-- 3. HORAIRES & SACREMENTS -->
+    <section id="horaires">
+        <h2>Horaires & Sacrements</h2>
+        <div class="grid">
+            <div class="card"><h3>⛪ Messes</h3><p>Dimanche: 7h, 9h, 11h <br> Semaine: 6h30</p></div>
+            <div class="card"><h3>💧 Baptême</h3><p>1er Dimanche du mois. Inscription au presbytère.</p></div>
+            <div class="card"><h3>💍 Mariage</h3><p>Préparation 6 mois avant. Voir le Curé.</p></div>
+            <div class="card"><h3>🙏 Confession</h3><p>Samedi: 15h - 17h</p></div>
+            <div class="card"><h3>📖 Catéchèse</h3><p>Enfants: Mercredi 15h | Adultes: Vendredi 18h</p></div>
+        </div>
+    </section>
 
-    <!-- ONGLET OFFRANDES -->
-    <div id="offrandes" class="tab-content">
-        <h3>Enregistrer Offrande</h3>
-        <select id="typeOffrande">
-            <option>Quête</option>
-            <option>Dîme</option>
-            <option>Action de Grâce</option>
-        </select>
-        <input id="montantOffrande" type="number" placeholder="Montant Fbu">
-        <button onclick="addOffrande()">Enregistrer</button>
-        <table id="tableOffrandes"></table>
-    </div>
-</div>
+    <!-- 4. SERVICES -->
+    <section id="services">
+        <h2>Services & Mouvements</h2>
+        <div class="grid">
+            <div class="card"><h3>🎵 Chorales</h3><p>Abakama | Abashirimbi | Jeunes</p></div>
+            <div class="card"><h3>👨‍👩‍👧 Mouvements</h3><p>Légion de Marie | Renouveau | Xaveri</p></div>
+            <div class="card"><h3>🤝 Caritas</h3><p>Aide aux plus démunis de la paroisse</p></div>
+            <div class="card"><h3>🧑 Jeunes</h3><p>Rencontres chaque Samedi 16h</p></div>
+            <div class="card"><h3>📹 SAVACOM</h3><p>Service Audio Visuel et Communication</p></div>
+        </div>
+    </section>
 
-<script>
-const API = 'https://gestionparoisse.onrender.com';
-let user = null;
+    <!-- 5. GESTION -->
+    <section id="gestion">
+        <h2>Gestion Paroissiale</h2>
+        <p style="text-align:center; margin-bottom:30px;">Accès réservé au Conseil Paroissial et à l'équipe de gestion</p>
+        <div class="grid">
+            <div class="card"><h3>👥 Membres</h3><p>Base de données des paroissiens</p><a href="/membres" class="btn btn-gestion">Accéder</a></div>
+            <div class="card"><h3>💰 Quêtes & Dîmes</h3><p>Enregistrement et suivi</p><a href="/offrandes" class="btn btn-gestion">Accéder</a></div>
+            <div class="card"><h3>📊 Rapport</h3><p>Exporter PDF/Excel du mois</p><a href="/rapport" class="btn btn-gestion">Accéder</a></div>
+            <div class="card"><h3>📈 Tableau de Bord</h3><p>Statistiques en temps réel</p><a href="/dashboard" class="btn btn-gestion">Accéder</a></div>
+        </div>
+    </section>
 
-function openTab(tabName) {
-    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.getElementById(tabName).classList.add('active');
-    event.target.classList.add('active');
-    if(tabName === 'membres') loadMembres();
-    if(tabName === 'offrandes') loadOffrandes();
-    if(tabName === 'produits') loadProduits();
-}
+    <!-- 6. ACTUALITES & GALERIE -->
+    <section id="actualites">
+        <h2>Actualités & Galerie</h2>
+        <div class="grid">
+            <div class="card"><h3>📰 Dernières Nouvelles</h3><p>Fête Patronale: 20 Octobre 2026</p></div>
+            <div class="card"><h3>📸 Photos</h3><p>Confirmation 2026</p></div>
+            <div class="card"><h3>🎥 Vidéos</h3><p>Homélie du Dimanche</p></div>
+            <div class="card"><h3>📄 Bulletins PDF</h3><p>Télécharger le bulletin du mois</p></div>
+        </div>
+    </section>
 
-async function login() {
-    const res = await fetch(API + '/login', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({email: email.value, password: password.value})
-    });
-    const data = await res.json();
-    if(res.ok) {
-        user = data;
-        document.getElementById('userName').innerText = user.nom;
-        loginBox.style.display = 'none';
-        app.style.display = 'block';
-        loadProduits();
-    } else {
-        loginError.innerText = data.message;
-    }
-}
-function logout() { location.reload(); }
+    <!-- 7. CONTACT & DONS -->
+    <section id="contact">
+        <h2>Contact & Dons</h2>
+        <div class="grid">
+            <div class="card" style="background: rgba(255,255,255,0.1);">
+                <h3>📍 Adresse</h3>
+                <p>Paroisse Kanyinya<br>Commune Mutimbuzi, Bujumbura</p>
+            </div>
+            <div class="card" style="background: rgba(255,255,255,0.1);">
+                <h3>📞 Téléphone</h3>
+                <p>+257 79 12 34 56</p>
+            </div>
+            <div class="card" style="background: rgba(255,255,255,0.1);">
+                <h3>💸 Mobile Money</h3>
+                <p>EcoCash: 79 12 34 56<br>Lumicash: 68 12 34 56</p>
+            </div>
+            <div class="card" style="background: rgba(255,255,255,0.1);">
+                <h3>📧 Email</h3>
+                <p>paroissekanyinya@gmail.com</p>
+            </div>
+        </div>
+    </section>
 
-// CRUD PRODUITS
-async function loadProduits() {
-    const res = await fetch(API + '/produits');
-    const data = await res.json();
-    tableProduits.innerHTML = '<tr><th>Emoji</th><th>Nom</th><th>Prix</th></tr>' + 
-    data.map(p => `<tr><td>${p.emoji}</td><td>${p.nom}</td><td>${p.prix} Fbu</td></tr>`).join('');
-}
-async function addProduit() {
-    await fetch(API + '/produits', {method: 'POST', headers: {'Content-Type': 'application/json'}, 
-        body: JSON.stringify({nom: nomProduit.value, emoji: emojiProduit.value, prix: prixProduit.value})});
-    loadProduits();
-}
+    <footer>
+        <p>© 2026 Paroisse Kanyinya - Archidiocèse de Bujumbura. Développé avec ❤️</p>
+    </footer>
 
-// CRUD MEMBRES
-async function loadMembres() {
-    const res = await fetch(API + '/membres');
-    const data = await res.json();
-    tableMembres.innerHTML = '<tr><th>Nom</th><th>Téléphone</th><th>Adresse</th></tr>' + 
-    data.map(m => `<tr><td>${m.nom}</td><td>${m.telephone}</td><td>${m.adresse}</td></tr>`).join('');
-}
-async function addMembre() {
-    await fetch(API + '/membres', {method: 'POST', headers: {'Content-Type': 'application/json'}, 
-        body: JSON.stringify({nom: nomMembre.value, telephone: telMembre.value, adresse: adresseMembre.value})});
-    loadMembres();
-}
-
-// CRUD OFFRANDES
-async function loadOffrandes() {
-    const res = await fetch(API + '/offrandes');
-    const data = await res.json();
-    tableOffrandes.innerHTML = '<tr><th>Type</th><th>Montant</th><th>Date</th><th>Par</th></tr>' + 
-    data.map(o => `<tr><td>${o.type}</td><td>${o.montant} Fbu</td><td>${new Date(o.date).toLocaleDateString()}</td><td>${o.responsable}</td></tr>`).join('');
-}
-async function addOffrande() {
-    await fetch(API + '/offrandes', {method: 'POST', headers: {'Content-Type': 'application/json'}, 
-        body: JSON.stringify({type: typeOffrande.value, montant: montantOffrande.value, responsable: user.nom})});
-    loadOffrandes();
-}
-</script>
 </body>
 </html>
