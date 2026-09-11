@@ -1,53 +1,69 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const mongoose = require('mongoose');
 
-// Notre base de données temporaire en mémoire
-let produits = [
-    { _id: '1', nom: 'Croissant', emoji: '🥐', prix: 1500 },
-    { _id: '2', nom: 'Pain', emoji: '🍞', prix: 1000 }
-];
+// 1. CONNEXION A MONGODB
+const MONGO_URI = "mongodb+srv://adminparoisse:Yd734mZzkXGIzWF3@cluster0.Yd734mZzkXGIzWF3.mongodb.net/paroisse?retryWrites=true&w=majority";
 
-const server = http.createServer((req, res) => {
-    // 1. Servir la page HTML principale
+console.log("Tentative de connexion à MongoDB...");
+
+mongoose.connect(MONGO_URI)
+.then(() => console.log("✅ Connecté à MongoDB"))
+.catch(err => console.log("❌ Erreur MongoDB:", err));
+
+// 2. CREER LE MODELE PRODUIT
+const produitSchema = new mongoose.Schema({
+    nom: String,
+    emoji: String,
+    prix: Number
+});
+const Produit = mongoose.model('Produit', produitSchema);
+
+const server = http.createServer(async (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    if (req.method === 'OPTIONS') { res.writeHead(204); return res.end(); }
+
+    // 1. Servir la page HTML
     if (req.url === '/' && req.method === 'GET') {
         fs.readFile(path.join(__dirname, 'index.html'), (err, content) => {
             res.writeHead(200, { 'Content-Type': 'text/html; charset=UTF-8' });
             res.end(content);
         });
     } 
-    // 2. L'API GET : Envoyer la liste des produits à la page web
+    // 2. L'API GET : Envoyer la liste depuis MongoDB
     else if (req.url === '/produits' && req.method === 'GET') {
+        const produits = await Produit.find();
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(produits));
     } 
-    // 3. L'API POST : Recevoir un nouveau produit et l'ajouter
+    // 3. L'API POST : Ajouter dans MongoDB
     else if (req.url === '/produits' && req.method === 'POST') {
         let body = '';
         req.on('data', chunk => { body += chunk.toString(); });
-        req.on('end', () => {
+        req.on('end', async () => {
             const nouveau = JSON.parse(body);
-            nouveau._id = Date.now().toString(); // Génère un identifiant unique
-            produits.push(nouveau);
+            await Produit.create(nouveau);
             res.writeHead(201, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ message: 'Succès' }));
         });
     } 
-    // 4. L'API DELETE : Supprimer un produit de la liste
+    // 4. L'API DELETE
     else if (req.url.startsWith('/produits/') && req.method === 'DELETE') {
         const idASupprimer = req.url.split('/')[2];
-        produits = produits.filter(p => p._id !== idASupprimer);
+        await Produit.findByIdAndDelete(idASupprimer);
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ message: 'Supprimé' }));
     } 
-    // Si la route n'existe pas
     else {
         res.writeHead(404, { 'Content-Type': 'text/plain' });
         res.end('Introuvable');
     }
 });
 
-// Le serveur écoute sur le port 3000
-server.listen(3000, () => {
-    console.log('🚀 Serveur démarré sur http://localhost:3000');
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+    console.log(`🚀 Serveur démarré sur le port ${PORT}`);
 });
